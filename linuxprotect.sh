@@ -45,6 +45,12 @@ else
 	:
 fi
 
+if [ "$interface" ]; then 
+	echo "interface = $interface" 
+else 
+	:
+fi
+
 if [ "$report" ]; then 
 	echo "report name = $report" 
 else 
@@ -105,6 +111,20 @@ else
 	:
 fi
 
+if [ "$keyword" = "http_drop" ]; then 
+	iptables -A OUTPUT -p tcp --dport 80 -j DROP
+	echo -e "Deny all HTTP packets requests from this server TO remote servers"
+else 
+	:
+fi
+
+if [ "$keyword" = "http_forward" ]; then 
+	iptables -t filter -A FORWARD -p tcp --dport 443 -j DROP
+	echo -e "Deny all HTTPS packets requests from this server TO remote servers"
+else 
+	:
+fi
+
 if [ "$keyword" = "restart_rules" ]; then 
 	iptables -F
 	iptables -X
@@ -122,13 +142,14 @@ call_each()
 	iptables_exec
 }
 
-while getopts "h:k:r:e:t:i" option; do
+while getopts "h:k:r:e:t:i:I" option; do
  case "${option}" in
 		k) keyword=${OPTARG};;
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
 		t) thorough=1;;
 		i) iptables_exec=1;;
+		I) interface=${OPTARG};;
 		h) usage; exit;;
 		*) usage; exit;;
  esac
