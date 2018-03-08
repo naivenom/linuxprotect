@@ -19,6 +19,7 @@ echo -e "\e[00;33m# Example: ./linuxprotect.sh -k keyword -r report -e /tmp/ -t 
 		echo "-t	Include thorough (lengthy) tests"
 		echo "-r	Enter report name" 
 		echo "-h	Displays this help text"
+		echo "-o  Execute an option"
 		echo "-i  	Displays IPTABLES Configuration"
 		echo -e "\n"
 		echo "Running with no options = limited scans/no output file"
@@ -63,6 +64,12 @@ else
 	echo "thorough tests = disabled" 
 fi
 
+if [ "$iptables_exec" ]; then 
+	echo "iptables execution = enabled" 
+else 
+	echo "iptables execution = disabled" 
+fi
+
 sleep 2
 
 if [ "$export" ]; then
@@ -76,7 +83,7 @@ fi
 who=`whoami` 2>/dev/null 
 echo -e "\n" 
 
-echo -e "\e[00;33mScan started at:"; date 
+echo -e "\e[00;33mTool started at:"; date 
 echo -e "\e[00m\n" 
 }
 
@@ -85,7 +92,9 @@ iptables_exec()
 echo -e "\e[00;33m### IPTABLES ##############################################\e[00m" 
 
 #basic iptables status of firewall
-if [ "$keyword" = status ]; then 
+set -x
+
+if [ "$keyword" = "status" ]; then 
 	iptables -L -n -v
 else 
 	:
@@ -106,7 +115,7 @@ while getopts "h:k:r:e:t:i" option; do
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
 		t) thorough=1;;
-		i) iptables_exec; exit;;
+		i) iptables_exec=1;;
 		h) usage; exit;;
 		*) usage; exit;;
  esac
