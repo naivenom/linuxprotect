@@ -106,15 +106,17 @@ else
 fi
 
 if [ "$keyword" = "http_drop" ]; then 
-	iptables -A OUTPUT -p tcp --dport 80 -j DROP
+	iptables -A OUTPUT -i -p tcp --dport 80 -j DROP
 	echo -e "Deny all HTTP packets requests from this server TO remote servers"
 else 
 	:
 fi
 
 if [ "$keyword" = "http_forward" ]; then 
-	iptables -t filter -A FORWARD -p tcp --dport 443 -j DROP
-	echo -e "Deny all HTTPS packets requests from this server TO remote servers"
+	read -p 'Paquetes que entran por la Interface: ' interface_entrada
+	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --dport 80 -j DROP
+	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script"
 else 
 	:
 fi
