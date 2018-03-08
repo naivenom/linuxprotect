@@ -11,7 +11,7 @@ echo -e "\e[00;31m#\e[00m" "\e[00;33mLinux Defend and Detect Attacks\e[00m" "\e[
 echo -e "\e[00;31m#########################################################\e[00m"
 echo -e "\e[00;33m# www.fwhibbit.es | @naivenom \e[00m"
 echo -e "\e[00;33m# $v\e[00m\n"
-echo -e "\e[00;33m# Example: ./linuxprotect.sh -k keyword -r report -e /tmp/ -t \e[00m\n"
+echo -e "\e[00;33m# Example: ./linuxprotect.sh -i -k https_drop"
 
 		echo "OPTIONS:"
 		echo "-k	Enter keyword or option"
@@ -19,7 +19,7 @@ echo -e "\e[00;33m# Example: ./linuxprotect.sh -k keyword -r report -e /tmp/ -t 
 		echo "-t	Include thorough (lengthy) tests"
 		echo "-r	Enter report name" 
 		echo "-h	Displays this help text"
-		echo "-i  	Displays IPTABLES Configuration"
+		echo "-i  	Displays IPTABLES Execution"
 		echo -e "\n"
 		echo "Running with no options = limited scans/no output file"
 		
