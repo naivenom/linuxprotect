@@ -1,5 +1,5 @@
 #!/bin/bash
-#A script to defend an protect Linux servers like Debian or Ubuntu
+#Script para defender y monitorizar servidores Linux
 v="version 0.1"
 #@naivenom
 
@@ -9,7 +9,7 @@ usage ()
 echo -e "\n\e[00;31m#########################################################\e[00m" 
 echo -e "\e[00;31m#\e[00m" "\e[00;33mLinux Defend and Detect Attacks\e[00m" "\e[00;31m#\e[00m"
 echo -e "\e[00;31m#########################################################\e[00m"
-echo -e "\e[00;33m# www.fwhibbit.es | @naivenom \e[00m"
+echo -e "\e[00;33m# www.fwhibbit.es && @naivenom \e[00m"
 echo -e "\e[00;33m# $v\e[00m\n"
 echo -e "\e[00;33m# Example: ./linuxprotect.sh -i -k https_drop"
 
@@ -82,7 +82,7 @@ fi
 who=`whoami` 2>/dev/null 
 echo -e "\n" 
 
-echo -e "\e[00;33mTool started at:"; date 
+echo -e "\e[00;33mTool ejecuta en:"; date 
 echo -e "\e[00m\n" 
 }
 
@@ -100,14 +100,17 @@ fi
 
 if [ "$keyword" = "https_drop" ]; then 
 	iptables -A OUTPUT -p tcp --dport 443 -j DROP
-	echo -e "Deny all HTTPS packets requests from this server TO remote servers"
+	iptables -A INPUT -p tcp --sport 443 -j DROP
+	echo -e "Descartado todos los paquetes HTTPS desde este servidor a servidores remotos (peticion y respuesta)"
 else 
 	:
 fi
 
 if [ "$keyword" = "http_drop" ]; then 
-	iptables -A OUTPUT -i -p tcp --dport 80 -j DROP
-	echo -e "Deny all HTTP packets requests from this server TO remote servers"
+	iptables -A OUTPUT -p tcp --dport 80 -j DROP
+	iptables -A INPUT -p tcp --sport 80 -j DROP
+	echo -e "Descartado todos los paquetes HTTP desde este servidor a servidores remotos (peticion y respuesta)"
+
 else 
 	:
 fi
@@ -116,7 +119,26 @@ if [ "$keyword" = "http_forward" ]; then
 	read -p 'Paquetes que entran por la Interface: ' interface_entrada
 	read -p 'Paquetes que salen por la Interface: ' interface_salida
 	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --dport 80 -j DROP
-	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script"
+	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --sport 80 -j DROP
+	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script (peticion y respuesta)"
+else 
+	:
+fi
+
+if [ "$keyword" = "ssh_forward" ]; then 
+	read -p 'Paquetes que entran por la Interface: ' interface_entrada
+	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --dport 22 -j DROP
+	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --sport 22 -j DROP
+	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script (peticion y respuesta)"
+else 
+	:
+fi
+
+if [ "$keyword" = "nat_postrouting" ]; then 
+	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	iptables -t nat -A POSTROUTING -o $interface_salida -j MASQUERADE
+	echo -e "Realizado SNAT para enrutamiento de los paquetes por la interfaz de salida $interface_salida con IP publica"
 else 
 	:
 fi
