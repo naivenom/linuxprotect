@@ -45,12 +45,6 @@ else
 	:
 fi
 
-if [ "$interface" ]; then 
-	echo "interface = $interface" 
-else 
-	:
-fi
-
 if [ "$report" ]; then 
 	echo "report name = $report" 
 else 
@@ -142,14 +136,13 @@ call_each()
 	iptables_exec
 }
 
-while getopts "h:k:r:e:t:i:I" option; do
+while getopts "h:k:r:e:t:i" option; do
  case "${option}" in
 		k) keyword=${OPTARG};;
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
 		t) thorough=1;;
 		i) iptables_exec=1;;
-		I) interface=${OPTARG};;
 		h) usage; exit;;
 		*) usage; exit;;
  esac
