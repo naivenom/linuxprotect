@@ -91,7 +91,6 @@ iptables_exec()
 echo -e "\e[00;33m### IPTABLES ##############################################\e[00m" 
 
 #basic iptables status of firewall
-set -x
 
 if [ "$keyword" = "status" ]; then 
 	iptables -L -n -v
@@ -99,6 +98,21 @@ else
 	:
 fi
 
+if [ "$keyword" = "https_drop" ]; then 
+	iptables -A OUTPUT -p tcp --dport 443 -j DROP
+	echo -e "Deny all HTTPS packets requests from this server TO remote servers"
+else 
+	:
+fi
+
+if [ "$keyword" = "restart_rules" ]; then 
+	iptables -F
+	iptables -X
+	echo -e "Deleting (flushing) all the rules and delete chain"
+
+else 
+	:
+fi
 }
 
 call_each()
