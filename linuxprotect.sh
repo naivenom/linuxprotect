@@ -1,5 +1,5 @@
 #!/bin/bash
-#Script para defender y monitorizar servidores Linux
+#A script for hardening Linux servers
 v="version 0.1"
 #@naivenom
 
@@ -19,7 +19,7 @@ echo -e "\e[00;33m# Example: ./linuxprotect.sh -i -k https_drop"
 		echo "-t	Include thorough (lengthy) tests"
 		echo "-r	Enter report name" 
 		echo "-h	Displays this help text"
-		echo "-i  	Displays IPTABLES Execution"
+		echo "-i  	Displays IPTABLES Execution Command"
 		echo -e "\n"
 		echo "Running with no options = limited scans/no output file"
 		
@@ -97,11 +97,12 @@ if [ "$keyword" = "status" ]; then
 else 
 	:
 fi
-
+#basic iptables local rules
 if [ "$keyword" = "https_drop" ]; then 
 	iptables -A OUTPUT -p tcp --dport 443 -j DROP
 	iptables -A INPUT -p tcp --sport 443 -j DROP
-	echo -e "Descartado todos los paquetes HTTPS desde este servidor a servidores remotos (peticion y respuesta)"
+	echo -e "Deny all HTTPS packets from this server TO remote servers (Request and Response)"
+			
 else 
 	:
 fi
@@ -109,41 +110,67 @@ fi
 if [ "$keyword" = "http_drop" ]; then 
 	iptables -A OUTPUT -p tcp --dport 80 -j DROP
 	iptables -A INPUT -p tcp --sport 80 -j DROP
-	echo -e "Descartado todos los paquetes HTTP desde este servidor a servidores remotos (peticion y respuesta)"
+	echo -e "Deny all HTTP packets from this server TO remote servers (Request and Response)"
 
 else 
 	:
 fi
 
 if [ "$keyword" = "http_forward" ]; then 
-	read -p 'Paquetes que entran por la Interface: ' interface_entrada
-	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	read -p 'Entry packets by Interface: ' interface_entrada
+	read -p 'Output packets by Interface: ' interface_salida
 	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --dport 80 -j DROP
 	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --sport 80 -j DROP
-	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script (peticion y respuesta)"
+	echo -e "Deny all HTTP traffic for those servers or machines that pass through the server that runs Iptables in this script (request and response)"
+
 else 
 	:
 fi
 
 if [ "$keyword" = "ssh_forward" ]; then 
-	read -p 'Paquetes que entran por la Interface: ' interface_entrada
-	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	read -p 'Entry packets by Interface: ' interface_entrada
+	read -p 'Output packets by Interface: ' interface_salida
 	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --dport 22 -j DROP
 	iptables -t filter -A FORWARD -i $interface_entrada -o $interface_salida -p tcp --sport 22 -j DROP
-	echo -e "Descartado trafico HTTP para aquellos servidores o maquinas que pasan por el server que ejecuta Iptables en este script (peticion y respuesta)"
+	echo -e "Deny all SSH traffic for those servers or machines that pass through the server that runs Iptables in this script (request and response)"
 else 
 	:
 fi
 
 if [ "$keyword" = "nat_postrouting" ]; then 
-	read -p 'Paquetes que salen por la Interface: ' interface_salida
+	read -p 'Output packets by Interface: ' interface_salida
 	iptables -t nat -A POSTROUTING -o $interface_salida -j MASQUERADE
-	echo -e "Realizado SNAT para enrutamiento de los paquetes por la interfaz de salida $interface_salida con IP publica"
+	echo -e "SNAT for routing packets through the output interface $interface_salida with public IP"
 else 
 	:
 fi
 
-if [ "$keyword" = "restart_rules" ]; then 
+if [ "$keyword" = "list_filter" ]; then 
+	iptables -t filter -nvL --line-numbers
+	echo -e "List of rules applied to the filter table"
+else 
+	:
+fi
+
+if [ "$keyword" = "list_nat" ]; then 
+	iptables -t nat -nvL --line-numbers
+	echo -e "List of rules applied for the table nat"
+else 
+	:
+fi
+
+if [ "$keyword" = "delete_selective" ]; then
+	read -p 'Introduce table: ' table
+	read -p 'Introduce chain: ' cadena
+	read -p 'Introduce number of rule: ' number
+	iptables -t $table -D $cadena $number
+	echo -e "Selective deleting by rule number"
+
+else 
+	:
+fi
+
+if [ "$keyword" = "restart_firewall" ]; then 
 	iptables -F
 	iptables -X
 	echo -e "Deleting (flushing) all the rules and delete chain"
@@ -151,6 +178,18 @@ if [ "$keyword" = "restart_rules" ]; then
 else 
 	:
 fi
+
+if [ "$keyword" = "policy_default" ]; then
+	read -p 'Introduce table: ' table
+	read -p 'Introduce chain: ' cadena
+	read -p 'Introduce policy (ACCEPT|DROP): ' policy
+	iptables -t $table -P $cadena $policy
+	echo -e "Setting policy by default"
+
+else 
+	:
+fi
+
 }
 
 call_each()
@@ -175,4 +214,3 @@ done
 
 
 call_each | tee -a $report 2> /dev/null
-#EndOfScript
