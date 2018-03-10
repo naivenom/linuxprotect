@@ -1,7 +1,6 @@
 # linuxprotect
 Script for hardening Linux servers
 
-Help: 
 | Parameter  | Description|
 | ----- | ------ |
 | -k | Enter keyword or option |
