@@ -32,7 +32,8 @@ echo -e "\n\e[00;31m#########################################################\e[
 echo -e "\e[00;31m#\e[00m" "\e[00;33mMonitoring and defending Linux servers\e[00m" "\e[00;31m#\e[00m" 
 echo -e "\e[00;31m#########################################################\e[00m" 
 echo -e "\e[00;33m# www.fwhibbit.es\e[00m" 
-echo -e "\e[00;33m# $version\e[00m\n" 
+echo -e "\e[00;33m# @naivenom\e[00m" 
+echo -e "\e[00;33m# $v\e[00m\n" 
 
 }
 
@@ -80,8 +81,6 @@ else
 	:
 fi
 
-who=`whoami` 2>/dev/null 
-echo -e "\n" 
 
 echo -e "\e[00;33mThe Tool was executed:"; date 
 echo -e "\e[00m\n" 
@@ -276,7 +275,7 @@ fi
 if [ "$keyword" = "policy_default" ]; then
 	read -p 'Introduce chain: ' chain
 	iptables -P $chain DROP
-	echo -e "Setting policy by default"
+	echo -e "Setting policy by default to DROP"
 
 else 
 	:
@@ -689,7 +688,16 @@ fi
 if [ "$keyword" = "policy_default" ]; then
 	read -p 'Introduce chain: ' chain
 	iptables -P $chain DROP
-	echo -e "Setting policy by default"
+	echo -e "Setting policy by default to DROP"
+
+else 
+	:
+fi
+
+if [ "$keyword" = "disable_ipv6" ]; then
+	read -p 'Introduce chain: ' chain
+	ip6tables -P $chain DROP
+	echo -e "Deactivation of the ipv6 protocol"
 
 else 
 	:
