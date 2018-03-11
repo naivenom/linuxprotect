@@ -19,4 +19,4 @@ Script for hardening Linux servers
 
 (avoid_scan,avoid_syn and avoid_ping) These rules must be executed just before the rules for connections**</br>
 Example:
-./linuxprotect.sh -i -k ssh_server
+./linuxprotect.sh -i basic -k ssh_server
