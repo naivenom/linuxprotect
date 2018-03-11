@@ -11,7 +11,7 @@ echo -e "\e[00;31m#\e[00m" "\e[00;33mMonitoring and defending Linux servers\e[00
 echo -e "\e[00;31m#########################################################\e[00m"
 echo -e "\e[00;33m# www.fwhibbit.es && @naivenom \e[00m"
 echo -e "\e[00;33m# $v\e[00m\n"
-echo -e "\e[00;33m# Example: ./linuxprotect.sh -i -k ssh_server"
+echo -e "\e[00;33m# Example: ./linuxprotect.sh -i advanced -k status"
 
 		echo "OPTIONS:"
 		echo "-k	Enter keyword or option"
