@@ -8,8 +8,7 @@ Script for hardening Linux servers
 | -t | Include thorough (lengthy) tests |
 | -r | Enter report name |
 | -h | Displays this help text |
-| -i basic | Displays IPTABLES Basic Execution Command for LAN Network |
-| -i advanced | Displays IPTABLES Advanced Execution Command for LAN Network with DMZ |
+| -i | Displays IPTABLES Basic or Advanced Execution Command for LAN Network. Ex: -i basic/advanced |
 
 
 | Functions  | Keyword|
