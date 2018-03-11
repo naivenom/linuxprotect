@@ -14,13 +14,13 @@ echo -e "\e[00;33m# $v\e[00m\n"
 echo -e "\e[00;33m# Example: ./linuxprotect.sh -i advanced -k status"
 
 		echo "OPTIONS:"
-		echo "-k			Enter keyword or option"
-		echo "-e			Enter export location"
-		echo "-t			Include thorough (lengthy) tests"
-		echo "-r			Enter report name" 
-		echo "-h			Displays this help text"
-		echo "-i basic  	Displays IPTABLES Basic Execution Command for LAN Network"
-		echo "-i advanced  	Displays IPTABLES Advanced Execution Command for LAN Network with DMZ"
+		echo "-k		Enter keyword or option"
+		echo "-e		Enter export location"
+		echo "-t		Include thorough (lengthy) tests"
+		echo "-r		Enter report name" 
+		echo "-h		Displays this help text"
+		echo "-i  		Displays IPTABLES Execution Command for LAN Network. Mode: -i basic/advanced"
+		echo "-r 		Displays RECON in LAN Network. Mode: -r scan/dhcp/dns"
 		echo -e "\n"
 		echo "Running with no options = limited execution/no output file"
 		
@@ -706,9 +706,46 @@ fi
 
 recon_scan()
 {
-	echo -e "\e[00;33m### BASIC PING SCAN ##############################################\e[00m"
+	echo -e "\e[00;33m### SCAN ##############################################\e[00m"
+	sleep 1
+	
+	if [ "$keyword" = "bash_ping" ]; then
 	read -p 'Introduce Network (Ex:10.10.1): ' net
-	for ip in $(seq 1 254); do ping -c 1 $net.$ip>/dev/null; [$? -eq 0] && echo "$net.$ip UP" || :; done
+	for i in {1..254}; do ping -c 1 -W 1 $net.$i | grep 'from'; done
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "nmap_ping" ]; then
+	read -p 'Introduce Network (Ex:10.10.1.0/24): ' net
+	nmap -sn -PE $net
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "nmap_scan" ]; then
+	read -p 'Introduce IP: ' ip
+	nmap -v -Pn -T4 -A -p- $ip
+	else 
+		:
+	fi
+	
+}
+
+recon_dhcp()
+{
+	echo -e "\e[00;33m### DHCP LEASE LOGS ##############################################\e[00m"
+	grep -Ei 'dhcp' /var/log/syslog.1
+	
+	
+}
+
+recon_dns()
+{
+	echo -e "\e[00;33m### DNS LOGS ##############################################\e[00m"
+	tail -f /var/log/messages | grep named
+	
+	
 }
 
 call_functions()
@@ -727,6 +764,18 @@ call_functions()
 	fi
 	if [ "$recon" = "scan" ]; then
 	recon_scan
+	else 
+		:
+	fi
+
+	if [ "$recon" = "dhcp" ]; then
+	recon_dhcp
+	else 
+		:
+	fi
+
+	if [ "$recon" = "dns" ]; then
+	recon_dns
 	else 
 		:
 	fi
