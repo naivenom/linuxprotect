@@ -64,16 +64,10 @@ else
 	echo "thorough tests = disabled" 
 fi
 
-if [ "$iptables_basic" ]; then 
-	echo "iptables basic execution = enabled" 
+if [ "$iptables" ]; then 
+	echo "iptables execution = enabled" 
 else 
-	echo "iptables basic execution = disabled" 
-fi
-
-if [ "$iptables_advanced" ]; then 
-	echo "iptables advanced execution = enabled" 
-else 
-	echo "iptables advanced execution = disabled" 
+	echo "iptables execution = disabled" 
 fi
 
 sleep 2
