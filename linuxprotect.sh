@@ -14,11 +14,11 @@ echo -e "\e[00;33m# $v\e[00m\n"
 echo -e "\e[00;33m# Example: ./linuxprotect.sh -i advanced -k status"
 
 		echo "OPTIONS:"
-		echo "-k	Enter keyword or option"
-		echo "-e	Enter export location"
-		echo "-t	Include thorough (lengthy) tests"
-		echo "-r	Enter report name" 
-		echo "-h	Displays this help text"
+		echo "-k			Enter keyword or option"
+		echo "-e			Enter export location"
+		echo "-t			Include thorough (lengthy) tests"
+		echo "-r			Enter report name" 
+		echo "-h			Displays this help text"
 		echo "-i basic  	Displays IPTABLES Basic Execution Command for LAN Network"
 		echo "-i advanced  	Displays IPTABLES Advanced Execution Command for LAN Network with DMZ"
 		echo -e "\n"
@@ -501,7 +501,6 @@ fi
 #Allow source ICMP traffic from LAN Network
 if [ "$keyword" = "icmp_lan" ]; then
 	read -p 'LAN interface: ' lan_int
-	read -p 'External interface: ' ext_int
 	read -p 'LAN Network: ' net
 	echo -e "Allow source ICMP traffic from LAN Network"
 	iptables -A FORWARD -i $lan_int -s $net -p icmp -j ACCEPT
@@ -705,6 +704,13 @@ fi
 
 }
 
+recon_scan()
+{
+	echo -e "\e[00;33m### BASIC PING SCAN ##############################################\e[00m"
+	read -p 'Introduce Network (Ex:10.10.1): ' net
+	for ip in $(seq 1 254); do ping -c 1 $net.$ip>/dev/null; [$? -eq 0] && echo "$net.$ip UP" || :; done
+}
+
 call_functions()
 {
 	header
@@ -719,12 +725,18 @@ call_functions()
 	else 
 		:
 	fi
+	if [ "$recon" = "scan" ]; then
+	recon_scan
+	else 
+		:
+	fi
 
 }
 
-while getopts "i:h:k:r:e:t" option; do
+while getopts "i:r:h:k:r:e:t" option; do
  case "${option}" in
  		i) iptables=${OPTARG};;
+		r) recon=${OPTARG};;
 		k) keyword=${OPTARG};;
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
