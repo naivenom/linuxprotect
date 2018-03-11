@@ -19,8 +19,8 @@ echo -e "\e[00;33m# Example: ./linuxprotect.sh -i -k ssh_server"
 		echo "-t	Include thorough (lengthy) tests"
 		echo "-r	Enter report name" 
 		echo "-h	Displays this help text"
-		echo "-i  	Displays IPTABLES Basic Execution Command for LAN Network"
-		echo "-I  	Displays IPTABLES Advanced Execution Command for LAN Network with DMZ"
+		echo "-i basic  	Displays IPTABLES Basic Execution Command for LAN Network"
+		echo "-i advanced  	Displays IPTABLES Advanced Execution Command for LAN Network with DMZ"
 		echo -e "\n"
 		echo "Running with no options = limited execution/no output file"
 		
@@ -323,7 +323,7 @@ else
 	:
 fi
 
-##########################AVOID TCP SYN INPUT CONNECTIONS
+##########################AVOID TCP SYN INPUT CONNECTIONS (SYN FLOOD)
 
 if [ "$keyword" = "avoid_syn" ]; then
 	read -p 'External interface: ' ext_int
@@ -338,7 +338,7 @@ else
 	:
 fi
 
-##########################AVOID PING PER SECOND AND IP ADDRESS
+##########################AVOID PING PER SECOND AND IP ADDRESS (ICMP FLOOD)
 
 if [ "$keyword" = "avoid_ping" ]; then
 	read -p 'External interface: ' ext_int
@@ -707,18 +707,28 @@ call_functions()
 {
 	header
 	debug_info
+	set -x
+	if [ "$iptables" = "basic" ]; then
 	iptables_basic
+	else 
+		:
+	fi
+	set -x
+	if [ "$iptables" = "advanced" ]; then
 	iptables_advanced
+	else 
+		:
+	fi
+
 }
 
-while getopts "h:k:r:e:t:i:I" option; do
+while getopts "i:h:k:r:e:t" option; do
  case "${option}" in
+ 		i) iptables=${OPTARG};;
 		k) keyword=${OPTARG};;
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
 		t) thorough=1;;
-		i) iptables_basic=1;;
-		I) iptables_advanced=1;;
 		h) usage; exit;;
 		*) usage; exit;;
  esac
