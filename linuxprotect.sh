@@ -707,13 +707,11 @@ call_functions()
 {
 	header
 	debug_info
-	set -x
 	if [ "$iptables" = "basic" ]; then
 	iptables_basic
 	else 
 		:
 	fi
-	set -x
 	if [ "$iptables" = "advanced" ]; then
 	iptables_advanced
 	else 
