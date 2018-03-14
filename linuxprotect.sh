@@ -73,6 +73,24 @@ else
 	echo "iptables execution = disabled" 
 fi
 
+if [ "$recon" ]; then 
+	echo "recon execution = enabled" 
+else 
+	echo "recon execution = disabled" 
+fi
+
+if [ "$services" ]; then 
+	echo "services execution = enabled" 
+else 
+	echo "services execution = disabled" 
+fi
+
+if [ "$host" ]; then 
+	echo "host execution = enabled" 
+else 
+	echo "host execution = disabled" 
+fi
+
 sleep 2
 
 if [ "$export" ]; then
@@ -853,11 +871,10 @@ host_dns()
 	fi
 
 	if [ "$keyword" = "dnsmasq_flush" ]; then
-		exist = $(apt-cache policy nmap | grep Installed | cut -d' ' -f4 2>&1)
-		if [ "$exist" = "(none)" ]; then
+		noexist = $(apt-cache policy nmap | grep Installed | cut -d' ' -f4 2>&1)
+		if [ "$noexist" = "(none)" ]; then
 			apt-get install dnsmasq
 		else 
-			:
 			echo "hola"
 			#/etc/init.d/dnsmasq restart
 		fi
