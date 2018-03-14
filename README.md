@@ -10,6 +10,7 @@ Script for hardening Linux servers
 | -h | Displays this help text |
 | -i | Displays IPTABLES Basic or Advanced Execution Command for LAN Network. Mode: -i basic/advanced |
 | -r | Displays RECON in LAN Network. Mode: -r scan/dhcp/dns |
+| -s | Displays SERVICES in Server. Mode: -s info/start/restart/stop |
 
 
 | Functions  | Keyword|
@@ -19,7 +20,10 @@ Script for hardening Linux servers
 | recon_scan | bash_ping: Ping sweep </br> nmap_ping: Ping sweep </br> nmap_scan: Scan TCP, verbose and determine open ports and services|
 | recon_dhcp | No Keyword|
 | recon_dns | No Keyword|
-
+| services_info | service: Status of service </br> ps: Displays information about a selection of the active processes.|
+| services_start | apache2: Start a service </br> mysql: Start a service|
+| services_restart | apache2: Restart a service </br> mysql: Restart a service|
+| services_stop | apache2: Stop a service </br> mysql: Stop a service|
 
 Example:
 ./linuxprotect.sh -i basic -k ssh_server </br>
