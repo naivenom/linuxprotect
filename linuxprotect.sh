@@ -21,6 +21,8 @@ echo -e "\e[00;33m# Example: ./linuxprotect.sh -i advanced -k status"
 		echo "-h		Displays this help text"
 		echo "-i  		Displays IPTABLES Execution Command for LAN Network. Mode: -i basic/advanced"
 		echo "-r 		Displays RECON in LAN Network. Mode: -r scan/dhcp/dns"
+		echo "-s 		Displays SERVICES in Server. Mode: -s disable/enable/info"
+		echo "-H 		Displays HOST FILE in Server. Mode: -H malicious/dns"
 		echo -e "\n"
 		echo "Running with no options = limited execution/no output file"
 		
@@ -710,22 +712,22 @@ recon_scan()
 	sleep 1
 	
 	if [ "$keyword" = "bash_ping" ]; then
-	read -p 'Introduce Network (Ex:10.10.1): ' net
-	for i in {1..254}; do ping -c 1 -W 1 $net.$i | grep 'from'; done
+		read -p 'Introduce Network (Ex:10.10.1): ' net
+		for i in {1..254}; do ping -c 1 -W 1 $net.$i | grep 'from'; done
 	else 
 		:
 	fi
 
 	if [ "$keyword" = "nmap_ping" ]; then
-	read -p 'Introduce Network (Ex:10.10.1.0/24): ' net
-	nmap -sn -PE $net
+		read -p 'Introduce Network (Ex:10.10.1.0/24): ' net
+		nmap -sn -PE $net
 	else 
 		:
 	fi
 
 	if [ "$keyword" = "nmap_scan" ]; then
-	read -p 'Introduce IP: ' ip
-	nmap -v -Pn -T4 -A -p- $ip
+		read -p 'Introduce IP: ' ip
+		nmap -v -Pn -T4 -A -p- $ip
 	else 
 		:
 	fi
@@ -748,6 +750,123 @@ recon_dns()
 	
 }
 
+services_info()
+{
+	echo -e "\e[00;33m### SERVICES INFO ##############################################\e[00m"
+	if [ "$keyword" = "service" ]; then
+		service --status-all
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "ps" ]; then
+		ps -ef
+		ps -aux
+	else 
+		:
+	fi
+	
+	
+}
+
+services_start()
+{
+	echo -e "\e[00;33m### SERVICE START ##############################################\e[00m"
+	if [ "$keyword" = "apache2" ]; then
+		/etc/init.d/apache2 start
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "mysql" ]; then
+		service mysql start
+	else 
+		:
+	fi
+	
+	
+}
+
+services_restart()
+{
+	echo -e "\e[00;33m### SERVICE RESTART ##############################################\e[00m"
+	if [ "$keyword" = "apache2" ]; then
+		/etc/init.d/apache2 restart
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "mysql" ]; then
+		service mysql restart
+	else 
+		:
+	fi
+	
+	
+}
+
+services_stop()
+{
+	echo -e "\e[00;33m### SERVICE STOP ##############################################\e[00m"
+	if [ "$keyword" = "apache2" ]; then
+	/etc/init.d/apache2 stop
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "mysql" ]; then
+	service mysql stop
+	else 
+		:
+	fi
+	
+	
+}
+
+host_malicious()
+{
+	echo -e "\e[00;33m### NEW MALICIOUS DOMAIN ##############################################\e[00m"
+	if [ "$keyword" = "route_localhost" ]; then
+		read -p 'Introduce MALICIOUS DOMAIN: ' domain
+		echo 127.0.0.1 $domain >> /etc/hosts
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "check_route" ]; then
+		read -p 'Introduce MALICIOUS DOMAIN: ' domain
+		ping -c 1 $domain
+	else 
+		:
+	fi
+	
+	
+}
+
+host_dns()
+{
+	echo -e "\e[00;33m### DNS CACHE ##############################################\e[00m"
+	if [ "$keyword" = "dns_flush" ]; then
+		/etc/init.d/dns-clean start
+	else 
+		:
+	fi
+
+	if [ "$keyword" = "dnsmasq_flush" ]; then
+		exist = $(apt-cache policy nmap | grep Installed | cut -d' ' -f4 2>&1)
+		if [ "$exist" = "(none)" ]; then
+			apt-get install dnsmasq
+		else 
+			:
+			echo "hola"
+			#/etc/init.d/dnsmasq restart
+		fi
+	else 
+		:
+	fi
+	
+	
+}
 call_functions()
 {
 	header
@@ -780,12 +899,49 @@ call_functions()
 		:
 	fi
 
+	if [ "$services" = "info" ]; then
+	services_info
+	else 
+		:
+	fi
+
+	if [ "$services" = "start" ]; then
+	services_start
+	else 
+		:
+	fi
+
+	if [ "$services" = "restart" ]; then
+	services_restart
+	else 
+		:
+	fi
+
+	if [ "$services" = "stop" ]; then
+	services_stop
+	else 
+		:
+	fi
+
+	if [ "$host" = "malicious" ]; then
+	host_malicious
+	else 
+		:
+	fi
+
+	if [ "$host" = "dns" ]; then
+	host_dns
+	else 
+		:
+	fi
 }
 
-while getopts "i:r:h:k:r:e:t" option; do
+while getopts "i:r:s:H:h:k:r:e:t" option; do
  case "${option}" in
  		i) iptables=${OPTARG};;
 		r) recon=${OPTARG};;
+		s) services=${OPTARG};;
+		H) host=${OPTARG};;
 		k) keyword=${OPTARG};;
 		r) report=${OPTARG}"-"`date +"%d-%m-%y"`;;
 		e) export=${OPTARG};;
