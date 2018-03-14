@@ -871,12 +871,11 @@ host_dns()
 	fi
 
 	if [ "$keyword" = "dnsmasq_flush" ]; then
-		noexist = $(apt-cache policy nmap | grep Installed | cut -d' ' -f4 2>&1)
-		if [ "$noexist" = "(none)" ]; then
+		noexist=`apt-cache policy nmap | grep Installed | cut -d' ' -f4`
+		if [ "$noexist" == "(none)" ]; then
 			apt-get install dnsmasq
 		else 
-			echo "hola"
-			#/etc/init.d/dnsmasq restart
+			/etc/init.d/dnsmasq restart
 		fi
 	else 
 		:
