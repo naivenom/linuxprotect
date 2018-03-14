@@ -11,6 +11,8 @@ Script for hardening Linux servers
 | -i | Displays IPTABLES Basic or Advanced Execution Command for LAN Network. Mode: -i basic/advanced |
 | -r | Displays RECON in LAN Network. Mode: -r scan/dhcp/dns |
 | -s | Displays SERVICES in Server. Mode: -s info/start/restart/stop |
+| -H | Displays HOST FILE in Server. Mode: -H malicious/dns|
+
 
 
 | Functions  | Keyword|
@@ -24,6 +26,8 @@ Script for hardening Linux servers
 | services_start | apache2: Start a service </br> mysql: Start a service|
 | services_restart | apache2: Restart a service </br> mysql: Restart a service|
 | services_stop | apache2: Stop a service </br> mysql: Stop a service|
+| host_malicious | route_localhost: Add new malicious domain to hosts file, and route to localhost </br> check_route: Check if hosts file is working, by sending ping to 127.0.0.1|
+| host_dns | dns_flush: DNS cache flush </br> dnsmasq_flush: Flush dnsmasq DNS cache|
 
 Example:
 ./linuxprotect.sh -i basic -k ssh_server </br>
