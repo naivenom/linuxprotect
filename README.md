@@ -12,6 +12,7 @@ Script for hardening Linux servers
 | -r | Displays RECON in LAN Network. Mode: -r scan/dhcp/dns |
 | -s | Displays SERVICES in Server. Mode: -s info/start/restart/stop |
 | -H | Displays HOST FILE in Server. Mode: -H configure/malicious/dns|
+| -T | Displays TIMEZONE in Server. Mode: -T configure|
 
 
 
@@ -29,6 +30,7 @@ Script for hardening Linux servers
 | host_malicious | route_localhost: Add new malicious domain to hosts file, and route to localhost </br> check_route: Check if hosts file is working, by sending ping to 127.0.0.1|
 | host_dns | dns_flush: DNS cache flush </br> dnsmasq_flush: Flush dnsmasq DNS cache|
 | host_configure | No Keyword|
+| timezone_configure | No Keyword|
 
 Example:
 ./linuxprotect.sh -i basic -k ssh_server </br>
